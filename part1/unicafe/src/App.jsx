@@ -10,10 +10,23 @@ const Button = (props) => (
   </button>
 )
 
+const StatisticLine = ({ text, value }) => {
+  return (
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
+  )
+}
+
 const Statistics = ({good, neutral, bad, allReviews}) =>{
 
-  const sum = allReviews.reduce((a, b) => a + b, 0)
   const all = allReviews.length
+  if (all === 0) {
+    return <p>No feedback given</p>;
+  }
+  const sum = allReviews.reduce((a, b) => a + b, 0)
+
   const avg = (sum / all) || 0
   const pos = (good / all * 100) || 0 
 
@@ -22,12 +35,12 @@ const Statistics = ({good, neutral, bad, allReviews}) =>{
   return (
     <table>
       <tbody>
-        <tr><td>good</td><td>{good}</td></tr>
-        <tr><td>neutral</td><td>{neutral}</td></tr>
-        <tr><td>bad</td><td>{bad}</td></tr>
-        <tr><td>all</td><td>{all}</td></tr>
-        <tr><td>average</td><td>{avg.toFixed(1)}</td></tr>
-        <tr><td>positive</td><td>{pos.toFixed(1)}%</td></tr>
+        <StatisticLine text="good" value={good} />
+        <StatisticLine text="neutral" value={neutral} />
+        <StatisticLine text="bad" value={bad} />
+        <StatisticLine text="all" value={all} />
+        <StatisticLine text="average" value={avg.toFixed(1)} />
+        <StatisticLine text="positive" value={pos.toFixed(1) + '%'} />
       </tbody>
     </table>
   )
