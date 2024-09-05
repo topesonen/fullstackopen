@@ -1,10 +1,8 @@
 import { useState } from 'react'
+import Form from './components/Form'
+import Persons from './components/Persons'
+import Filter from './components/Filter'
 
-const Person = ({person}) => {
-  return (
-    <div>{person.name} {person.number}</div>
-  )
-}
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -37,45 +35,30 @@ const App = () => {
 
   }
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-  }
-
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value)
-  }
-
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value)
-  }
+  const handleNameChange = (event) => setNewName(event.target.value)
+  const handleNumberChange = (event) => setNewNumber(event.target.value)
+  const handleSearch = (event) => setSearchTerm(event.target.value)
 
   const namesToShow = persons.filter(person =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-
-  return (
-    <div>
-      <h2>Phonebook</h2>
-      <div>filter shown with <input value={searchTerm} onChange={handleSearch}/></div>
-      <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {namesToShow.map(person =>(
-        <Person key={person.id} person={person} />
-    ))}
-    </div>
-  )
-}
+    return (
+      <div>
+        <h2>Phonebook</h2>
+        <Filter searchTerm={searchTerm} handleSearch={handleSearch} />
+        <h2>add a new</h2>
+        <Form 
+          addPerson={addPerson}
+          newName={newName}
+          handleNameChange={handleNameChange}
+          newNumber={newNumber}
+          handleNumberChange={handleNumberChange}
+        />
+        <h2>Numbers</h2>
+        <Persons namesToShow={namesToShow} />
+      </div>
+    )
+  }
 
 export default App
