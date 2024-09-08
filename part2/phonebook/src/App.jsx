@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import './index.css'
 import Form from './components/Form'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import personService from './services/persons'
+import SuccessMessage from './components/SuccessMessage'
+import ErrorMessage from './components/ErrorMessage'
 
 
 const App = () => {
@@ -11,6 +13,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -45,9 +49,21 @@ const App = () => {
             ))
             setNewName('')
             setNewNumber('')
+            setSuccessMessage(
+              `Changed number for '${newPerson.name}`
+            )
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 3000)
           })
           .catch(error => {
             console.error("Error updating person:", error)
+            setErrorMessage(
+              `Information of '${personObject.name} has already been removed from server`
+            )
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
       })
       }
     } else {
@@ -57,6 +73,12 @@ const App = () => {
           setPersons(persons.concat(newPerson))
           setNewName('')
           setNewNumber('')
+          setSuccessMessage(
+            `Added '${newPerson.name}'`
+          )
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 3000)
         })
         .catch(error => {
           console.error("Error creating person:", error)
@@ -68,12 +90,19 @@ const App = () => {
     if (window.confirm(`Delete ${personToRemove.name}?`)) {
       console.log("removing person", id)
       personService
-        .remove(String(id))  // Convert id to string here
+        .remove(String(id))  // just in case, this was broken befor
+
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
         })
         .catch(error => {
           console.error('Error removing person:', error.response ? error.response.data : error.message)
+          setErrorMessage(
+            `Information of ${personToRemove.name} has already been removed from server`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
     }
   }
@@ -81,7 +110,7 @@ const App = () => {
   const handleNameChange = (event) => setNewName(event.target.value)
   const handleNumberChange = (event) => setNewNumber(event.target.value)
   const handleSearch = (event) => setSearchTerm(event.target.value)
-  console.log("persons", persons)
+  //console.log("persons", persons)
   const namesToShow = persons.filter(person =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -90,6 +119,8 @@ const App = () => {
     return (
       <div>
         <h2>Phonebook</h2>
+        <SuccessMessage message={successMessage} />
+        <ErrorMessage message={errorMessage} />
         <Filter searchTerm={searchTerm} handleSearch={handleSearch} />
         <h2>add a new</h2>
         <Form 
