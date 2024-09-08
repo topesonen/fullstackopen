@@ -1,3 +1,4 @@
+
 const CountryData = ({ country }) => {
   console.log(country)
   if (!country) return <p>No country data available</p>

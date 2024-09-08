@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import CountryData from './components/CountryData'
+import Weather from './components/Weather'
+
 import countryService from './services/countries'
 
 function App() {
   const [countries, setCountries] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCountry, setSelectedCountry] = useState(null)
-
+  const [weather, setWeather] = useState(null)
 
   // get all countries
   useEffect(() => {
@@ -23,6 +25,7 @@ function App() {
   const handleSearch = (event) => {
     setSearchTerm(event.target.value)
     setSelectedCountry(null)
+    setWeather(null)
   }
 
   const countriesToShow = countries.filter(country => 
@@ -36,12 +39,11 @@ function App() {
     countryService
       .getCountry(countryName.toLowerCase())
       .then(countryData => {
-        setSelectedCountry(countryData)
-
+        setSelectedCountry(countryData)     
       }).catch(error => {
         console.error("Error fetching country data:", error)
         setSelectedCountry(null)
-
+        setWeather(null)
       })
   }
   // get country if filtered down to one
@@ -80,7 +82,13 @@ function App() {
       <Filter searchTerm={searchTerm} handleSearch={handleSearch} />
       
       {renderCountries()}
-      {selectedCountry && <CountryData country={selectedCountry} />}
+      {selectedCountry && (
+        <>
+          <CountryData country={selectedCountry} />
+          {console.log("Weather for ", selectedCountry.capital[0])}
+          <Weather capital={selectedCountry.capital[0]} />
+        </>
+      )}
     </div>
   )
 }
